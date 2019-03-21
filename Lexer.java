@@ -287,6 +287,7 @@ public class Lexer {
          if ( state == 2 ) {
             // now anything starting with letter is either a
             // key word or a "var"
+            
             if ( data.equals("class") || data.equals("static") ||
                  data.equals("for") || data.equals("return") ||
                  data.equals("if") || data.equals("else") ||
