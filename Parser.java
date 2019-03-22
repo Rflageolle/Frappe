@@ -570,15 +570,16 @@ public Node parseRestOfMethod() {
   errorCheck(lparen, "symbol", "(");
 
   Token check = lex.getNextToken();
-  if ( check.matches("symbol", ")")) {
+  if ( check.isSymbol( ")" ) ) {
     Node first = parseMethodBody();
     return new Node("restOfMethod", first, null, null);
   } else {
     // consume <params>
+    lex.putBackToken( check );
     Node first = parseParams();
     // consume rparn
-    Token rparan = lex.getNextToken();
-    if ( rparan.matches("symbol", ")") ) {
+    Token rparen = lex.getNextToken();
+    if ( rparen.isSymbol( ")" ) ) {
       Node second = parseMethodBody();
       return new Node("restOfMethod", first, second, null);
     }
