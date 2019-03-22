@@ -590,6 +590,17 @@ public Node parseRestOfMethod() {
 public Node parseParams() {
   // NAME ||
   // NAME COMMA <params>
+  Token name = lex.getNextToken();
+  errorCheck( name, "NAME" );
+
+  // check for COMMA
+  Token check = lex.getNextToken();
+  if( check.isSymbol( "," ) ) {
+  	Node first = parseParams();
+  	return new Node("params", name.getDetails(), first, null, null);
+  }
+  lex.putBackToken( check );
+  return new Node("params", name.getDetails(), null, null, null);
 }
 // parse methodBody
 // parse statements
