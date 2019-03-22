@@ -508,6 +508,7 @@ public Node parseStaticField() {
       return new Node("staticField", name.getDetails(), first, null, null);
     } else {
       // staticField w/o
+    	equ.putBackToken( equ );
       return new Node("staticField", name.getDetails(), null, null, null);
     }
   }
@@ -516,8 +517,8 @@ public Node parseStaticField() {
 // parse staticmethod
 public Node parseStaticMethod() {
   // STATIC NAME <restOfMethod>
-  Token static = lex.getNextToken();
-  if ( static.matches("keyword", "STATIC")) {
+  Token keyword = lex.getNextToken();
+  if ( keyword.matches("keyword", "STATIC")) {
     //consume static
     Token name = lex.getNextToken();
     errorCheck(name, "NAME");
@@ -546,7 +547,7 @@ public Node parseConstructor() {
   errorCheck(classname, "CLASSNAME");
 
   Node first = parseRestOfMethod();
-  return new Node("constructor", name.getDetails(), first, null, null);
+  return new Node("constructor", classname.getDetails(), first, null, null);
 }
 
 // parse instanceMethod
