@@ -646,6 +646,7 @@ public Node parseStatements() {
 // parse statement
 public Node parseStatement() {
 	System.out.println("-----> parsing <statement>");
+
 	Token token = lex.getNextToken();
 	if( token.isKind("NAME") || token.isKind("CLASSNAME") ) { // either NAME EQUALS <rhs> | <refChain>
 		Token check = lex.getNextToken();
@@ -661,7 +662,6 @@ public Node parseStatement() {
       return new Node("statement", first, null, null);
 		}
 	} else if( token.matches("keyword", "WHILE") ) { // <whileStatement>
-    lex.putBackToken( token ); // put back the WHILE token
     Node first = parseWhileStatement();
     return new Node("statement", first, null, null);
 
@@ -678,18 +678,28 @@ public Node parseStatement() {
 }
 
 // parse whileStatement
-// lex.putBackToken( check );
-//       Node first = parseExpr();
-//       // consume right paren of while statement
-//       Token rparen = lex.getNextToken();
-//       errorCheck( rparen, "SYMBOL", ")" );
+public Node parseWhileStatement() {
+  System.out.println("-----> parsing <whileStatement>");
 
-//       Token lbrace = lex.getNextToken();
-//       errorCheck( lbrace, "SYMBOL", "{");
-//       lex.putBackToken( lbrace );
-//       Node second = parseLoopBody();
-//       return new Node("statement", first, second, null);
+  Token lparen = lex.getNextToken();
+  errorCheck( lparen, "SYMBOL", "(");
+
+  // parse while expression
+  Node first = parseExpr();
+  Token rparen = lex.getNextToken();
+  errorCheck( rparen, "SYMBOL", ")" );
+
+  // make sure we start the loop body with '{'
+  Token lbrace = lex.getNextToken();
+  errorCheck( lbrace, "SYMBOL", "{");
+
+  // call parse <loopBody>
+  Node second = parseLoopBody();
+  return new Node("statement", first, second, null);
+}
+      
 // parse ifStatement
+
 // parse rhs
 // parse loopBody
 // parse expression
