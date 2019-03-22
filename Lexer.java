@@ -308,7 +308,7 @@ public class Lexer {
            return new Token( "CLASSNAME", data );
          }
          else if ( state == 4 ) {
-            return new Token( "STRING", data );
+            return new Token( "STR", data );
          }
          else if ( state == 13 ) {
                return new Token( "SYMBOL", data );
