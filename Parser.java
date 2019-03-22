@@ -647,7 +647,6 @@ public Node parseStatements() {
 public Node parseStatement() {
 	System.out.println("-----> parsing <statement>");
 	Token token = lex.getNextToken();
-	// NAME EQUALS <rhs>
 	if( token.isKind("NAME") ) { // either NAME EQUALS <rhs> | <refChain>
 		Token check = lex.getNextToken();
 		if( check.isSymbol("=") ) { // NAME EQUALS <rhs>
