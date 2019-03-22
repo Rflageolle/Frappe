@@ -631,7 +631,17 @@ public Node parseMethodBody() {
 public Node parseStatements() {
 	System.out.println("-----> parsing <statements>");
 	Token token = lex.getNextToken();
-	//
+	// at least one statment
+	Node first = parseStatement();
+	// get next token to see if end of statements
+	Token check = lex.getNextToken();
+	if( check.isSymbol("}") ) {
+		return new Node("statements", first, null, null);
+	} else {
+		lex.putBackToken( check );
+		Node second = parseStatements();
+		return new Node("statements", first, second, null);
+	}
 }
 
 // parse statement
