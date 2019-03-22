@@ -599,10 +599,15 @@ public Node parseParams() {
   	Node first = parseParams();
   	return new Node("params", name.getDetails(), first, null, null);
   }
+  // down to one param
   lex.putBackToken( check );
   return new Node("params", name.getDetails(), null, null, null);
 }
 // parse methodBody
+public Node parseMethodBody() {
+	Token lparen = lex.getNextToken();
+	errorCheck( lparen, "symbol", "(" );
+}
 // parse statements
 // parse statement
 // parse whileStatement
