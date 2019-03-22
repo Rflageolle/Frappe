@@ -661,35 +661,34 @@ public Node parseStatement() {
       return new Node("statement", first, null, null);
 		}
 	} else if( token.matches("keyword", "WHILE") ) { // <whileStatement>
-    // consume left paren
-    Token lparen = lex.getNextToken();
-    errorCheck( lparen, "SYMBOL", "(" );
+    lex.putBackToken( token ); // put back the WHILE token
+    Node first = parseWhileStatement();
+    return new Node("statement", first, null, null);
 
-    // get next token which should be <expression>
-    Token check = lex.getNextToken();
-    // check to make sure it is an <expression> type
-    if( check.matches("keyword", "NULL") || check.matches("keyword", "THIS") ||
-        check.matches("keyword", "TRUE") || check.matches("keyword", "FALSE") ||
-        check.isKind("NUM") || check.isKind("STR") || check.isKind("NAME") ||
-        check.isKind("CLASSNAME") ) {
-      
-      lex.putBackToken( check );
-      Node first = parseExpr();
-      // consume right paren of while statement
-      Token rparen = lex.getNextToken();
-      errorCheck( rparen, "SYMBOL", ")" );
-
-      Token lbrace = lex.getNextToken();
-      errorCheck( lbrace, "SYMBOL", "{" );
-    }
 	} else if( token.matches("keyword", "IF") ) { // <ifStatement>
+    lex.putBackToken( token ); // put back the IF token
+    Node first = parseIfStatement();
+    return new Node("statement", first, null, null);
 
 	} else { // RETURN <expression>
-
+    // no need to put back RETURN token
+    Node first = parseExpr();
+    return new Node("statement", first, null, null);
 	}
 }
 
 // parse whileStatement
+// lex.putBackToken( check );
+//       Node first = parseExpr();
+//       // consume right paren of while statement
+//       Token rparen = lex.getNextToken();
+//       errorCheck( rparen, "SYMBOL", ")" );
+
+//       Token lbrace = lex.getNextToken();
+//       errorCheck( lbrace, "SYMBOL", "{");
+//       lex.putBackToken( lbrace );
+//       Node second = parseLoopBody();
+//       return new Node("statement", first, second, null);
 // parse ifStatement
 // parse rhs
 // parse loopBody
