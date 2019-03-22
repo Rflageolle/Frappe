@@ -495,6 +495,7 @@ public Node parseMember() {
 
 // parse staticField
 public Node parseStaticField() {
+	System.out.println("-----> parsing <staticField>");
   // static should be kind STATIC
   Token keyword = lex.getNextToken();
   if ( keyword.matches("keyword", "STATIC") ) {
@@ -516,6 +517,7 @@ public Node parseStaticField() {
 
 // parse staticmethod
 public Node parseStaticMethod() {
+	System.out.println("-----> parsing <staticMethod>");
   // STATIC NAME <restOfMethod>
   Token keyword = lex.getNextToken();
   if ( keyword.matches("keyword", "STATIC")) {
@@ -531,6 +533,7 @@ public Node parseStaticMethod() {
 
 // parse instatnceField
 public Node parseInstanceField() {
+	System.out.println("-----> parsing <instanceField>");
   // NAME
   Token name = lex.getNextToken();
   errorCheck(name, "NAME");
@@ -542,6 +545,7 @@ public Node parseInstanceField() {
 
 // parse constructor
 public Node parseConstructor() {
+	System.out.println("-----> parsing <constructor>");
   // CLASSNAME <restOfMethod>
   Token classname = lex.getNextToken();
   errorCheck(classname, "CLASSNAME");
@@ -552,6 +556,7 @@ public Node parseConstructor() {
 
 // parse instanceMethod
 public Node parseInstanceMethod() {
+	System.out.println("-----> parsing <instanceMethod>");
   // NAME <restOfMethod>
   Token name = lex.getNextToken();
   errorCheck(name, "NAME");
@@ -562,6 +567,7 @@ public Node parseInstanceMethod() {
 
 // parse restOfMethod
 public Node parseRestOfMethod() {
+	System.out.println("-----> parsing <restOfMethod>");
   // LPAREN RPAREN <methodBody> |
   // LPAREN <params> RPAREN <methodBody>
 
@@ -588,6 +594,7 @@ public Node parseRestOfMethod() {
 
 // parse params
 public Node parseParams() {
+	System.out.println("-----> parsing <params>");
   // NAME ||
   // NAME COMMA <params>
   Token name = lex.getNextToken();
@@ -605,10 +612,28 @@ public Node parseParams() {
 }
 // parse methodBody
 public Node parseMethodBody() {
-	Token lparen = lex.getNextToken();
-	errorCheck( lparen, "symbol", "(" );
+	// consume lparen
+	Token lbrace = lex.getNextToken();
+	errorCheck( lbrace, "symbol", "{" );
+
+	Token check = lex.getNextToken();
+	// check if an empty method body
+	if( check.isSymbol("}") ) {
+		return new Node("methodBody", null, null, null);
+	} else {
+		lex.putBackToken( check );
+		Node first = parseStatements();
+		return new Node("methodBody", first, null, null);
+	}
 }
+
 // parse statements
+public Node parseStatements() {
+	System.out.println("-----> parsing <statements>");
+	Token token = lex.getNextToken();
+	//
+}
+
 // parse statement
 // parse whileStatement
 // parse ifStatement

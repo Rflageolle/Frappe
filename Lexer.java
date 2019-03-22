@@ -289,12 +289,11 @@ public class Lexer {
             // key word or a "var"
             
             if ( data.equals("class") || data.equals("static") ||
-                 data.equals("for") || data.equals("return") ||
+                 data.equals("while") || data.equals("return") ||
                  data.equals("if") || data.equals("else") ||
-                 data.equals("new") || data.equals("void") ||
-                 data.equals("null") || data.equals("this") ||
-                 data.equals("true") || data.equals("false") ||
-                 data.equals("main")
+                 data.equals("new") || data.equals("null") ||
+                 data.equals("this") || data.equals("true") ||
+                 data.equals("false")
                 ) {
                return new Token("keyword", data.toUpperCase());
             }
