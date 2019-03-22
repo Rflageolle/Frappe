@@ -458,58 +458,144 @@ public Node parseMember() {
     Token token = lex.getNextToken();
     if ( token.isSymbol("(")) {
       //static method
+      lex.putBackToken(keyword);
       lex.putBackToken(name);
+      lex.putBackToken(token);
       Node first = parseStaticMethod();
       return new Node("member", first, null, null);
     } else {
       //staticfield with expression
+      lex.putBackToken(keyword);
       lex.putBackToken(name);
       lex.putBackToken(token);
       Node first = parseStaticField();
       return new Node("member", first, null, null);
-    } 
+    }
   } else if (token.isKind("NAME")) {
     Token check = lex.getNextToken();
     lex.putback( keyword );
     if ( token.isSymbol("(")) {
       //instanceMethod
+      lex.putBackToken(keyword);
+      lex.putBackToken(name);
       lex.putBackToken(token);
       Node first = parseInstanceMethod();
       return new Node("member", first, null, null);
     } else {
       //instanceField
+      lex.putBackToken(keyword);
+      lex.putBackToken(name);
       lex.putBackToken(token);
       Node first = parseInstanceField();
       return new Node("member", first, null, null);
     }
   } else {
-    return new Node("member", null, null, null);
-  }
-                                                                if (symbol) {
-                                                                  = (
-
-
-                                                                  = =
-
-                                                                  else _
-                                                                }
-                                                                else if (name) {
-                                                                  = (
-
-                                                                  = _
-                                                                }
-
-                                                                if ( )
-
-}
+    // constructor
+    if ( token.isKind("CLASSNAME") ) {
+      lex.putBackToken(keyword);
+      lex.putBackToken(name);
+      lex.putBackToken( token );
+      Node first = parseConstructor();
+      return new Node("member", first, null, null);
+    }
+  } //end parse member
 
 // parse staticField
+public Node parseStaticField() {
+  // static should be kind STATIC
+  Token static = lex.getNextToken();
+  if ( static.matches("keyword", "STATIC") ) {
+    // name should be kind NAME
+    Token name = lex.getNextToken();
+    errorCheck(name, "NAME");
+    Token equ = lex.getNextToken();
+    if ( equ.matches("SYMBOL", "=") ) {
+      // staticField with expression
+      Node first = parseExpr();
+      return new Node("staticField", name.getDetails(), first, null, null);
+    } else {
+      // staticField w/o
+      return new Node("staticField", name.getDetails(), null, null, null);
+    }
+  }
+}
+
 // parse staticmethod
+public Node parseStaticMethod() {
+  // STATIC NAME <restOfMethod>
+  Token static = lex.getNextToken();
+  if ( static.matches("keyword", "STATIC")) {
+    //consume static
+    Token name = lex.getNextToken();
+    errorCheck(name, "NAME");
+    // consume name
+
+    Node first = parseRestOfMethod();
+    return new Node("staticMethod", name.getDetails(), first, null, null);
+  }
+}
+
 // parse instatnceField
+public Node parseInstanceField() {
+  // NAME
+  Token name = lex.getNextToken();
+  errorCheck(name, "NAME");
+
+  if ( static.isKind("NAME") ) {
+    return new Node("instanceField", name.getDetails(), null, null, null);
+  }
+}
+
 // parse constructor
+public Node parseConstructor() {
+  // CLASSNAME <restOfMethod>
+  Token classname = lex.getNextToken();
+  errorCheck(classname, "CLASSNAME");
+
+  Node first = parseRestOfMethod();
+  return new Node("constructor", name.getDetails(), first, null, null);
+}
+
 // parse instanceMethod
+public Node parseInstanceMethod() {
+  // NAME <restOfMethod>
+  Token name = lex.getNextToken();
+  errorCheck(name, "NAME");
+
+  Node first = parseRestOfMethod();
+  return new Node("instanceMethod", name.getDetails(), first, null, null);
+}
+
 // parse restOfMethod
+public Node parseRestOfMethod() {
+  // LPAREN RPAREN <methodBody> |
+  // LPAREN <params> RPAREN <methodBody>
+
+  // consume lparen
+  Token lparen = lex.getNextToken();
+  errorCheck(lparen, "symbol", "(");
+
+  Token check = lex.getNextToken();
+  if ( check.matches("symbol", ")")) {
+    Node first = parseMethodBody();
+    return new Node("restOfMethod", first, null, null);
+  } else {
+    // consume <params>
+    Node first = parseParams();
+    // consume rparn
+    Token rparan = lex.getNextToken();
+    if ( rparan.matches("symbol", ")") ) {
+      Node second = parseMethodBody();
+      return new Node("restOfMethod", first, second, null);
+    }
+  }
+}
+
 // parse params
+public Node parseParams() {
+  // NAME ||
+  // NAME COMMA <params>
+}
 // parse methodBody
 // parse statements
 // parse statement
