@@ -630,7 +630,6 @@ public Node parseMethodBody() {
 // parse statements
 public Node parseStatements() {
 	System.out.println("-----> parsing <statements>");
-	Token token = lex.getNextToken();
 	// at least one statment
 	Node first = parseStatement();
 	// get next token to see if end of statements
@@ -645,6 +644,23 @@ public Node parseStatements() {
 }
 
 // parse statement
+public Node parseStatement() {
+	System.out.println("-----> parsing <statement>");
+	Token token = lex.getNextToken();
+	// NAME EQUALS <rhs>
+	if( token.isKind("NAME") ) {
+
+	} else if( token.isKind("CLASSNAME") || token.isKind("NAME")) { // <refChain>
+
+	} else if( token.matches("keyword", "WHILE") ) { // <whileStatement>
+
+	} else if( token.matches("keyword", "IF") ) { // <ifStatement>
+
+	} else { // RETURN <expression>
+		
+	}
+}
+
 // parse whileStatement
 // parse ifStatement
 // parse loopBody
