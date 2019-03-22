@@ -647,7 +647,7 @@ public Node parseStatements() {
 public Node parseStatement() {
 	System.out.println("-----> parsing <statement>");
 	Token token = lex.getNextToken();
-	if( token.isKind("NAME") ) { // either NAME EQUALS <rhs> | <refChain>
+	if( token.isKind("NAME") || token.isKind("CLASSNAME") ) { // either NAME EQUALS <rhs> | <refChain>
 		Token check = lex.getNextToken();
 		if( check.isSymbol("=") ) { // NAME EQUALS <rhs>
 			lex.putBackToken( token );
@@ -655,12 +655,33 @@ public Node parseStatement() {
 			Node first = parseRHS();
 			return new Node("statement", first, null, null);
 		} else { // <refChain>
-
+      lex.putBackToken( token );
+      lex.putBackToken( check );
+      Node first = parseRefChain();
+      return new Node("statement", first, null, null);
 		}
-	} else if( token.isKind("CLASSNAME") || token.isKind("NAME")) { // <refChain>
-
 	} else if( token.matches("keyword", "WHILE") ) { // <whileStatement>
+    // consume left paren
+    Token lparen = lex.getNextToken();
+    errorCheck( lparen, "SYMBOL", "(" );
 
+    // get next token which should be <expression>
+    Token check = lex.getNextToken();
+    // check to make sure it is an <expression> type
+    if( check.matches("keyword", "NULL") || check.matches("keyword", "THIS") ||
+        check.matches("keyword", "TRUE") || check.matches("keyword", "FALSE") ||
+        check.isKind("NUM") || check.isKind("STR") || check.isKind("NAME") ||
+        check.isKind("CLASSNAME") ) {
+      
+      lex.putBackToken( check );
+      Node first = parseExpr();
+      // consume right paren of while statement
+      Token rparen = lex.getNextToken();
+      errorCheck( rparen, "SYMBOL", ")" );
+
+      Token lbrace = lex.getNextToken();
+      errorCheck( lbrace, "SYMBOL", "{" );
+    }
 	} else if( token.matches("keyword", "IF") ) { // <ifStatement>
 
 	} else { // RETURN <expression>
