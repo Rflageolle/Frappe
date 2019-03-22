@@ -471,45 +471,38 @@ public Node parseMember() {
       Node first = parseStaticField();
       return new Node("member", first, null, null);
     }
-  } else if (token.isKind("NAME")) {
+  } else if (keyword.isKind("NAME")) {
     Token check = lex.getNextToken();
-    lex.putback( keyword );
-    if ( token.isSymbol("(")) {
+    lex.putback( keyword ); // put back instanceField or instanceMethod NAME
+    if ( check.isSymbol("(")) {
       //instanceMethod
-      lex.putBackToken(keyword);
-      lex.putBackToken(name);
-      lex.putBackToken(token);
+      lex.putBackToken( check );
       Node first = parseInstanceMethod();
       return new Node("member", first, null, null);
     } else {
       //instanceField
-      lex.putBackToken(keyword);
-      lex.putBackToken(name);
-      lex.putBackToken(token);
+      lex.putBackToken( check );
       Node first = parseInstanceField();
       return new Node("member", first, null, null);
     }
   } else {
     // constructor
-    if ( token.isKind("CLASSNAME") ) {
-      lex.putBackToken(keyword);
-      lex.putBackToken(name);
-      lex.putBackToken( token );
-      Node first = parseConstructor();
-      return new Node("member", first, null, null);
-    }
+    lex.putBackToken( keyword );
+    lex.putBackToken( check );
+    Node first = parseConstructor();
+    return new Node("member", first, null, null);
   } //end parse member
 
 // parse staticField
 public Node parseStaticField() {
   // static should be kind STATIC
-  Token static = lex.getNextToken();
-  if ( static.matches("keyword", "STATIC") ) {
+  Token keyword = lex.getNextToken();
+  if ( keyword.matches("keyword", "STATIC") ) {
     // name should be kind NAME
     Token name = lex.getNextToken();
     errorCheck(name, "NAME");
     Token equ = lex.getNextToken();
-    if ( equ.matches("SYMBOL", "=") ) {
+    if ( equ.isSymbol("=") ) {
       // staticField with expression
       Node first = parseExpr();
       return new Node("staticField", name.getDetails(), first, null, null);
