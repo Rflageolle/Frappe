@@ -810,10 +810,13 @@ public Node parseExpr() {
   // check if <refChain> or not
   Token check = lex.getNextToken();
   if( check.matches("keyword", "THIS") || check.matches("keyword", "NULL") ||
-      check.matches("keyword", "TRUE") || check.matches("keyword", "FALSE") ||
-      check.isKind("STR") || check.isKind("NUM") ) {
+      check.matches("keyword", "TRUE") || check.matches("keyword", "FALSE") ) {
 
-    // not <refChain>
+    // not <refChain> and "keyword"
+    return new Node("expression", check.getDetails(), null, null, null);
+
+  } else if( check.isKind("STR") || check.isKind("NUM") ) {
+    // not <refChain> and NUM or STR
     return new Node("expression", check.getKind(), null, null, null);
   }
   // put Token back and call parse <refChain>
@@ -842,5 +845,16 @@ public Node parseRefChain() {
 }
 
 // parse caller
+public Node parseCaller() {
+  System.out.println("-----> parsing <caller>");
+
+  Token token = lex.getNextToken();
+  // check if token is CLASSNAME
+  if( token.isKind("CLASSNAME") ) {
+    // no parsing calls, return null node with classname
+
+  }
+}
+
 // parse argsPart
 // parse args
