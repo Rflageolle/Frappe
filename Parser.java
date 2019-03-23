@@ -804,7 +804,27 @@ public Node parseLoopBody() {
 }
 
 // parse expression
+public Node parseExpr() {
+  System.out.println("-----> parsing <expression>");
+
+  // check if <refChain> or not
+  Token check = lex.getNextToken();
+  if( check.matches("keyword", "THIS") || check.matches("keyword", "NULL") ||
+      check.matches("keyword", "TRUE") || check.matches("keyword", "FALSE") ||
+      check.isKind("STR") || check.isKind("NUM") ) {
+
+    // not <refChain>
+    return new Node("expression", check.getKind(), null, null, null);
+  }
+  // put Token back and call parse <refChain>
+  lex.putBackToken( check );
+  Node first = parseRefChain();
+  return new Node("expression", first, null, null);
+}
+
 // parse refChain
+
+
 // parse caller
 // parse argsPart
 // parse args
