@@ -666,7 +666,6 @@ public Node parseStatement() {
     return new Node("statement", first, null, null);
 
 	} else if( token.matches("keyword", "IF") ) { // <ifStatement>
-    lex.putBackToken( token ); // put back the IF token
     Node first = parseIfStatement();
     return new Node("statement", first, null, null);
 
@@ -699,7 +698,71 @@ public Node parseWhileStatement() {
 }
       
 // parse ifStatement
+public Node parseIfStatement() {
+  System.out.println("-----> parsing <ifStatement>");
 
+  //consume left paren
+  Token lparen = lex.getNextToken();
+  errorCheck( lparen, "SYMBOL", "(" );
+
+  Node first = parseExpr();
+  // consume right paren
+  Token rparen = lex.getNextToken();
+  errorCheck( rparen, "SYMBOL", ")" );
+
+  // check for statements in if body
+  Token lbrace = lex.getNextToken();
+  errorCheck( lbrace, "SYMBOL", "{" );
+  Token check = lex.getNextToken();
+  if( !check.isSymbol("}") ) {
+    lex.putBackToken( check );
+    Node second = parseStatements();
+    // consume right brace of if body
+    Token rbrace = lex.getNextToken();
+    errorCheck( rbrace, "SYMBOL", "}" );
+
+    // check for ELSE statement
+    Token check = lex.getNextToken();
+    if( check.matches("keyword", "ELSE") ) {
+      // consume left brace of else
+      Token lbrace = lex.getNextToken();
+      errorCheck( lbrace, "SYMBOL", "{" );
+
+      Token braceCheck = lex.getNextToken();
+      if( !braceCheck.isSymbol("}") ) {
+        lex.putBackToken( braceCheck );
+        Node third = parseStatements();
+        // if and else had statements so three nodes
+        return new Node("ifStatement", first, second, third);
+      } else {
+        // empty else body so only two nodes
+        return new Node("ifStatement", first, second, null);
+      }
+    } else {
+      lex.putBackToken( check );
+      // if block with statements, no else
+      return new Node("ifStatement", first, second, null);
+    }
+  } else {
+    // empty if body, check for else
+    Token elseCheck = lex.getNextToken();
+    if( elseCheck.matches("keyword", "ELSE") ) {
+      Token lbrace = lex.getNextToken();
+      errorCheck( lbrace, "SYMBOL", "{" );
+
+      // check for statements in else body
+      Token braceCheck = lex.getNextToken();
+      if( !braceCheck.isSymbol("}") ) {
+        lex.putBackToken( braceCheck );
+        Node second = parseStatements();
+        // empty if body but else has statements: 2 nodes
+        return new Node("ifStatement", first, second, null);
+      }
+    }
+  }
+  // empty if and else bodies: 1 node
+  return new Node("ifStatement", first, null, null);
+}
 // parse rhs
 // parse loopBody
 // parse expression
