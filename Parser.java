@@ -651,15 +651,15 @@ public Node parseStatement() {
 	if( token.isKind("NAME") || token.isKind("CLASSNAME") ) { // either NAME EQUALS <rhs> | <refChain>
 		Token check = lex.getNextToken();
 		if( check.isSymbol("=") ) { // NAME EQUALS <rhs>
-			lex.putBackToken( token );
-			lex.putBackToken( check );
 			Node first = parseRHS();
 			return new Node("statement", first, null, null);
+
 		} else { // <refChain>
       lex.putBackToken( token );
       lex.putBackToken( check );
       Node first = parseRefChain();
       return new Node("statement", first, null, null);
+
 		}
 	} else if( token.matches("keyword", "WHILE") ) { // <whileStatement>
     Node first = parseWhileStatement();
@@ -763,7 +763,24 @@ public Node parseIfStatement() {
   // empty if and else bodies: 1 node
   return new Node("ifStatement", first, null, null);
 }
+
 // parse rhs
+public Node parseRHS() {
+  System.out.println("-----> parsing <rhs>");
+
+  Token check = lex.getNextToken();
+  if( check.matches("keyword", "NEW") ) { // NEW CLASSNAME <argPart>
+    Token className = lex.getNextToken();
+    Node first = parseArgsPart();
+    return new Node("rhs", first, null, null);
+
+  } else { // <expression>
+    lex.putBackToken( check );
+    Node first = parseExpr();
+    return new Node("rhs", first, null, null);
+
+  }
+}
 // parse loopBody
 // parse expression
 // parse refChain
