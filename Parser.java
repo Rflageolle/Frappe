@@ -889,3 +889,17 @@ public Node parseArgsPart() {
 }
 
 // parse args
+public Node parseArgs() {
+  System.out.println("-----> parsing <args>");
+
+  Node first = parseExpr();
+  // check for additional args
+  Token check = lex.getNextToken();
+  if( check.isSymbol(",") ) {
+    // there are more args
+    Node second = parseArgs();
+    return new Node("args", first, second, null);
+  }
+  // only one argument
+  return new Node("args", first, null, null);
+}
