@@ -652,7 +652,7 @@ public Node parseStatement() {
 		Token check = lex.getNextToken();
 		if( check.isSymbol("=") ) { // NAME EQUALS <rhs>
 			Node first = parseRHS();
-			return new Node("statement", first, null, null);
+			return new Node("statement", token.getDetails(), first, null, null);
 
 		} else { // <refChain>
       lex.putBackToken( token );
