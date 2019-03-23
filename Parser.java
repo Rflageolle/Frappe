@@ -852,7 +852,20 @@ public Node parseCaller() {
   // check if token is CLASSNAME
   if( token.isKind("CLASSNAME") ) {
     // no parsing calls, return null node with classname
+    return new Node("caller", token.getDetails(), null, null, null);
 
+  } else if( token.isKind("NAME") ) {
+    // check if just NAME or NAME <argsPart>
+    Token check = lex.getNextToken();
+    if( check.isSymbol("(") ) {
+      // has <argsPart>
+      lex.putBackToken( check );
+      Node first = parseArgsPart();
+      return new Node("caller", token.getDetails(), first, null, null);
+    }
+    // just NAME, no <argsPart>
+    lex.putBackToken( check );
+    return new Node("caller", token.getDetails(), null, null, null);
   }
 }
 
