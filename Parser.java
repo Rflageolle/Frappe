@@ -773,7 +773,7 @@ public Node parseRHS() {
   if( check.matches("keyword", "NEW") ) { // NEW CLASSNAME <argPart>
     Token className = lex.getNextToken();
     Node first = parseArgsPart();
-    return new Node("rhs", first, null, null);
+    return new Node("rhs", className.getDetails(), first, null, null);
 
   } else { // <expression>
     lex.putBackToken( check );
@@ -870,4 +870,22 @@ public Node parseCaller() {
 }
 
 // parse argsPart
+public Node parseArgsPart() {
+  System.out.println("-----> parsing <argsPart>");
+
+  // consume left paren
+  Token lparen = lex.getNextToken();
+
+  // check if empty args
+  Token check = lex.getNextToken();
+  if( !check.isSymbol(")") ) {
+    // non-empty args
+    lex.putBackToken( check );
+    Node first = parseArgs();
+    return new Node("argsPart", first, null, null);
+  }
+  // empty args
+  return new Node("argsPart", null, null, null);
+}
+
 // parse args
