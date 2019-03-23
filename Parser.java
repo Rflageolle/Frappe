@@ -823,7 +823,23 @@ public Node parseExpr() {
 }
 
 // parse refChain
+public Node parseRefChain() {
+  System.out.println("-----> parsing <refChain>");
 
+  // both cases start with <caller>
+  Node first = parseCaller();
+
+  // check for DOT <refChain>
+  Token check = lex.getNextToken();
+  if( check.isSymbol(".") ) {
+    // there is a <refChain>
+    Node second = parseRefChain();
+    return new Node("refChain", first, second, null);
+  }
+  // no <refChain>, put back Token and return first
+  lex.putBackToken( check );
+  return new Node("refChain", first, null, null);
+}
 
 // parse caller
 // parse argsPart
