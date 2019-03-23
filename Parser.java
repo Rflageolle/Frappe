@@ -692,7 +692,8 @@ public Node parseWhileStatement() {
   Token lbrace = lex.getNextToken();
   errorCheck( lbrace, "SYMBOL", "{");
 
-  // call parse <loopBody>
+  // put back brace and call parse <loopBody>
+  lex.putBackToken( lbrace );
   Node second = parseLoopBody();
   return new Node("statement", first, second, null);
 }
@@ -781,7 +782,27 @@ public Node parseRHS() {
 
   }
 }
+
 // parse loopBody
+public Node parseLoopBody() {
+  System.out.println("-----> parsing <loopBody>");
+
+  // consume left brace of loop body
+  Token lbrace = lex.getNextToken();
+  errorCheck( lbrace, "SYMBOL", "{" );
+
+  // check for <statements>
+  Token check = lex.getNextToken();
+  if( !check.isSymbol("}") ) {
+    lex.putBackToken( check );
+    Node first = parseStatements();
+    return new Node("loopBody", first, null, null);
+  
+  } 
+  // empty loop body
+  return new Node("loopBody", null, null, null);
+}
+
 // parse expression
 // parse refChain
 // parse caller
