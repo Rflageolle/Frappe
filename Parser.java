@@ -59,7 +59,7 @@ public class Parser {
    }
    
    public Node parseParams(){
-	   System.out.println("-----> parsing <params>:);
+	   System.out.println("-----> parsing <params>:");
 	   Token Name = lex.getNextToken();
 	   errorCheck ( Name, "NAME" );
 	   Token check = lex.getNextToken();
@@ -71,7 +71,7 @@ public class Parser {
    }
    
    public Node parseExpr() {
-   	System.out.println("-----> parsing <expr>:);
+   	System.out.println("-----> parsing <expr>:");
 	Token check = lex.getNextToken();
 	if ( check.isKind("Number") {
 		return new Node("expression", check, null, null, null)
@@ -100,7 +100,7 @@ public class Parser {
     }
 			   
    public Node parseItems() {
-	System.out.println("-----> parsing <list>:);
+	System.out.println("-----> parsing <items>:);
    	Node first = parseExpression();
    	Node second = null;
    	Token check = lex.getNextToken();
