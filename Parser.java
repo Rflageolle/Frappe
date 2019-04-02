@@ -83,7 +83,7 @@ public class Parser {
     }
     
     public Node parseList() {
-	System.out.println("-----> parsing <list>:);
+	System.out.println("-----> parsing <list>:");
 	Token lparen = lex.getNextToken();
 	errorCheck( lparen, "symbol", "(" );
 	
