@@ -108,8 +108,11 @@ public class Parser {
       Node first = parseExpression();
       Node second = null;
       Token check = lex.getNextToken();
-      if ( check.isKind("NUMBER") ) {
+      if ( check.isKind("NUMBER") || check.isKind("LPAREN") {
+        lex.putBackToken( check );
         second = parseExpression();
+      } else {
+        lex.putBackToken( check );
       }
       return new Node("items", first, second, null);
     }

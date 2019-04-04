@@ -48,52 +48,43 @@ public class Lexer {
       //System.out.println("current symbol: " + sym + " state = " + state );
 			if ( state == 1 ) {
 
-				if ( sym == 9 || sym == 10 || sym == 13 || sym == 32 ) {// whitespace
+				if ( sym == 9 || sym == 10 || sym == 13 || sym == 32 ) { // whitespace
 					state = 1;
 				}
 
-				else if( Character.isUpperCase(sym) ){
-					data += (char) sym;
-					state = 5;
-				}
-
-				else if( Character.isLowerCase(sym) ){
+				else if( letter(sym) ){
 					data += (char) sym;
 					state = 2;
 				}
 
-				else if( sym == '\"' ) {
+				else if( sym == '(' ) {
 					data += (char) sym;
 					state = 3;
 				}
 
-				else if( digit(sym) ){
+				else if( sym == ')' ){
 					data += (char) sym;
-					state = 10;
+					state = 4;
+				}
+
+				else if ( digit(sym) ) {
+					data += (char) sym;
+					state = 5;
 				}
 
 				else if ( sym == '-' ) {
 					data += (char) sym;
-					state = 11;
+					state = 6;
 				}
 
-				else if ( sym == '{' || sym == '}' || sym == ';' ||
-                         sym == '(' || sym == ')' || sym == '.' ||
-                         sym == ',' || sym == '=' ) {
-					data += (char) sym;
-					state = 13;
+				else if ( sym == ';' ) {
+					state = 8;
 				}
 
-				else if ( sym == '/' ) {
-					data += (char) sym;
-					state = 14;
-
-				}
-
-				else if ( sym == -1 ) {// end of file
-					state = 9;
-					done = true;
-				}
+        else if ( sym == -1 ) {
+          state = 9;
+          done = true;
+        }
 
 				else {
 					error("Error in lexical analysis phase with symbol "
@@ -115,37 +106,29 @@ public class Lexer {
 			}
 
 			else if ( state == 3 ) {
-
-				if ( sym != '\"' && sym != '\\' ) {
-					data += (char) sym;
-					state = 3;
-				}
-
-				else if ( sym == '\"' ) {
-					data += (char) sym;
-					state = 4;
-				}
-
-				else if ( sym == '\\' ) {
-					data += (char) sym;
-					state = 6;
-				}
-
+        putBackSymbol( sym );
+        done = true;
 			}
 
-			else if ( state == 4 ){
-		      putBackSymbol( sym );
-          done = true;
+      else if ( state == 4 ) {
+        putBackSymbol( sym );
+        done = true;
 			}
 
 			else if ( state == 5 ) {
-          if ( letter(sym) || digit(sym) ) {
+          if ( digit(sym) ) {
             data += (char) sym;
             state = 5;
           }
 
+          else if ( sym == '.' ) {
+            data += (char) sym;
+            state = 7;
+
+          }
+
           else {
-            putBackSymbol( sym );
+            putBackSymbol(sym);
             done = true;
           }
         }
@@ -154,7 +137,7 @@ public class Lexer {
 
         if ( digit(sym) ) {
           data += (char) sym;
-          state = 7;
+          state = 5;
         }
 
 			}
@@ -163,120 +146,33 @@ public class Lexer {
 
         if ( digit(sym) ) {
           data += (char) sym;
-          state = 8;
+        }
+
+        else {
+          putBackSymbol(sym);
+          done = true;
         }
 
 			}
 
 			else if ( state == 8 ) {
 
-        if ( digit(sym) ) {
-          data += (char) sym;
-          state = 3;
-        }
-
-			}
-
-			else if ( state == 9 ) { // unused
-				System.out.println("");
-				done = true;
-				}
-			else if ( state == 10 ) {
-
-        if (digit(sym)) {
-          data += (char) sym;
-          state = 10;
-        }
-
-        else if (sym == '.') {
-          data += (char) sym;
-          state = 12;
+        if ( sym != 10 ) {
+          state = 8;
         }
 
         else {
-          putBackSymbol(sym);
-          done = true;
+          state = 1;
+
         }
 
 			}
 
-			else if ( state == 11 ) {
-        if (digit(sym)) {
-          data += (char) sym;
-          state = 10;
-        }
-			}
-
-			else if ( state == 12 ) {
-        if (digit(sym)) {
-          data += (char) sym;
-          state = 12;
-        }
-
-        else {
-          putBackSymbol(sym);
-          done = true;
-        }
-			}
-
-			else if ( state == 13 ) {
-        putBackSymbol(sym);
+      else if ( state == 9 ) {
         done = true;
-			}
+      }
 
-			else if ( state == 14 ) {
-          if ( sym == '*') {
-            data += (char) sym;
-            state = 16;
-          }
 
-          else if (sym == '/') {
-            data += (char) sym;
-            state = 15;
-          }
-
-			}
-
-			else if ( state == 15 ) {
-        if (sym != '\n') {
-          data += (char) sym;
-          state = 15;
-        }
-        else {
-          putBackSymbol(sym);
-          done = true;
-        }
-			}
-
-			else if ( state == 16 ) {
-        if (sym != '*') {
-          data += (char) sym;
-          state = 16;
-        }
-
-        else if (sym == '*') {
-          data += (char) sym;
-          state = 17;
-        }
-
-			}
-
-			else if ( state == 17 ) {
-        if (sym == '/') {
-          data += (char) sym;
-          state = 18;
-        }
-
-        else if (sym != '/') {
-          data += (char) sym;
-          state = 16;
-        }
-			}
-
-			else if ( state == 18 ) {
-        putBackSymbol(sym);
-        done = true;
-			}
 
 		}while( !done );
 
@@ -287,39 +183,45 @@ public class Lexer {
          if ( state == 2 ) {
             // now anything starting with letter is either a
             // key word or a "var"
-            
-            if ( data.equals("class") || data.equals("static") ||
-                 data.equals("while") || data.equals("return") ||
-                 data.equals("if") || data.equals("else") ||
-                 data.equals("new") || data.equals("null") ||
-                 data.equals("this") || data.equals("true") ||
-                 data.equals("false")
-                ) {
-               return new Token("keyword", data.toUpperCase());
+
+            if ( data.equals("define") || data.equals("if") ||
+                 data.equals("plus") || data.equals("minus") ||
+                 data.equals("times") || data.equals("div") ||
+                 data.equals("lt") || data.equals("le") ||
+                 data.equals("eq") || data.equals("ne") ||
+                 data.equals("and") || data.equals("or") ||
+                 data.equals("not") || data.equals("ins") ||
+                 data.equals("first") || data.equals("rest") ||
+                 data.equals("null") || data.equals("num") ||
+                 data.equals("list") || data.equals("read") ||
+                 data.equals("write") || data.equals("nl") ||
+                 data.equals("quote") || data.equals("quit") ||
+                 data.equals("EOF") )
+
+                 {
+               return new Token("RESERVED", data );
             }
             else {
                return new Token( "NAME", data );
             }
          }
-         else if ( state == 10 || state == 12 ) {
-            return new Token( "NUM", data );
+
+         else if ( state == 3 ) {
+           return new Token( "LPAREN", data );
          }
-         else if ( state == 5 ) {
-           return new Token( "CLASSNAME", data );
-         }
+
          else if ( state == 4 ) {
-            return new Token( "STR", data );
+           return new Token( "RPAREN", data );
          }
-         else if ( state == 13 ) {
-               return new Token( "SYMBOL", data );
+
+         else if ( state == 5 || state == 7 ) {
+            return new Token( "NUMBER", data );
          }
 
          else if ( state == 9 ) {
-            return new Token( "eof", "Penis" );
+            return new Token( "EOF", data );
          }
-        else if ( state == 15 || state == 18 ) {
-          return new Token( "comment",  data);
-        }
+
          else {// Lexer error
            error("somehow Lexer FA halted in bad state " + state );
            return null;
@@ -397,7 +299,7 @@ public class Lexer {
      do{
        token = lex.getNext();
        System.out.println( token.toString() );
-     }while( ! token.getKind().equals( "eof" )  );
+     }while( ! token.getKind().equals( "EOF" )  );
 
    }
 
