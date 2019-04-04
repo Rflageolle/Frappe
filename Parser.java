@@ -58,6 +58,7 @@ public class Parser {
 
     }
 
+    // <params> -> NAME | NAME <params>
     public Node parseParams(){
       System.out.println("-----> parsing <params>:");
       Token Name = lex.getNextToken();
@@ -70,6 +71,7 @@ public class Parser {
       return new Node("params", Name, null, null, null);
     }
 
+    // <expr> -> NUMBER | <list>
     public Node parseExpr() {
       System.out.println("-----> parsing <expr>:");
       Token check = lex.getNextToken();
@@ -82,6 +84,7 @@ public class Parser {
       }
     }
 
+    // <list> -> LPAREN RPAREN | LPAREN <items> RPAREN
     public Node parseList() {
       System.out.println("-----> parsing <list>:");
       Token lparen = lex.getNextToken();
@@ -99,6 +102,7 @@ public class Parser {
       }
     }
 
+    // <items> -> <expr> | <expr> <items>
     public Node parseItems() {
       System.out.println("-----> parsing <items>:");
       Node first = parseExpression();
@@ -110,6 +114,9 @@ public class Parser {
       return new Node("items", first, second, null);
     }
 
+
+
+    // supplementary methods
     // check whether token is correct kind
     private void errorCheck( Token token, String kind ) {
       if( ! token.isKind( kind ) ) {
