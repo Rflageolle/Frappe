@@ -377,12 +377,17 @@ public class Parser {
    // parse classes
    public Node parseClasses() {
      System.out.println("-----> parsing <classes>");
+     // consume <class>
      Node first = parseClass();
+     // check if more classes
      Token token = lex.getNextToken();
      if (token.isKind("class")) {
+       // return single class node
        return new Node("classes", first, null, null);
      } else {
+       // put back token
        lex.putBackToken( token );
+       // consume <other classes>
        Node second = parseClasses();
        return new Node("classes", first, second, null);
      }
@@ -402,7 +407,6 @@ public class Parser {
      errorCheck( lbrace, "{");
 
      Token token = lex.getNextToken();
-
      if ( token.isKind("}")) {
        return new Node("class", null, null, null);
      } else {
