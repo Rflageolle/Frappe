@@ -22,12 +22,15 @@ public class Parser {
     System.out.println("-----> parsing <defs>");
     Node first = parseDef();
     Token check = lex.getNextToken();
-    Node second = null;
-    if (!check.matches("RESERVED", "EOF")){
+    if (!check.isKind("EOF")){
       lex.putBackToken(check);
-      second = parseDefs();
-    }
+       Node second = parseDefs();
       return new Node("defs", first, second, null);
+    }
+    else {
+      return new Node("defs", first, null, null);
+    }
+
     }
 
     //<def> -> LPAREN DEFINE LPAREN NAME RPAREN <expr> RPAREN | LPAREN DEFINE LPAREN NAME <params> RPAREN <expr> RPAREN
@@ -44,9 +47,9 @@ public class Parser {
       Token Rparen = lex.getNextToken();
       if ( Rparen.matches( "RPAREN", ")" )){
         Node first = parseExpression();
-        Rparen = lex.getNextToken()
+        Rparen = lex.getNextToken();
         errorCheck ( Rparen, "RPAREN", ")");
-        return new Node("def", Name, first, null, null);
+        return new Node("def", Name.getDetails(), first, null, null);
       }
       else {
         lex.putBackToken(Rparen);
@@ -61,23 +64,19 @@ public class Parser {
 
     }
 
-
+    //<params> -> NAME | NAME <params>
     public Node parseParams(){
       System.out.println("-----> parsing <params>:");
       Token name = lex.getNextToken();
-      if(name.isKind("NAME")) {
-        Token check = lex.getNextToken();
-        if (check.isKind("NAME")){
-          lex.putBackToken(check);
-          Node first = parseParams();
-          return new Node("params", check.getDetails(), first, null, null);
-        } else {
-          lex.putBackToken(check);
-          return new Node("params", name.getDetails(), null, null, null);
-        }
-      } else {
-        lex.putBackToken(name);
-        return null;
+      Token check = lex.getNextToken();
+      if (check.isKind("NAME")) {
+        lex.putBackToken(check);
+        Node first = parseParams();
+        return new Node("params", name.getDetails(), first, null, null);
+      }
+      else{
+        lex.putBackToken(check);
+        return new Node("params", name.getDetails(), null, null, null);
       }
     }
 
@@ -85,10 +84,16 @@ public class Parser {
     public Node parseExpression() {
       System.out.println("-----> parsing <expr>:");
       Token check = lex.getNextToken();
-      if ( check.isKind("NUMBER") || check.isKind( "NAME")) {
-        return new Node("expression", check.getKind(), null, null, null);
-      } else {
-        errorCheck(check, "LPAREN", "(");
+      if ( check.isKind("NUMBER") || check.isKind( "NAME") || check.isKind("RESERVED") ){
+        return new Node("expression", check.getDetails(), null, null, null);
+      // } else if (check.matches("RESERVED", "if")) {
+      //   Node first = parseExpression();
+      //   Node second = parseExpression();
+      //   Node third = parseExpression();
+      //   return new Node("expression", "if", first, second, third);
+      }
+      else {
+        lex.putBackToken(check);
         Node first = parseList();
         return new Node("expression", first, null, null);
       }
@@ -99,7 +104,6 @@ public class Parser {
       System.out.println("-----> parsing <list>:");
       Token lparen = lex.getNextToken();
       errorCheck ( lparen, "LPAREN", "(" );
-
       Token check = lex.getNextToken();
 
       if ( check.matches( "RPAREN", " ) " ) ) {
@@ -108,6 +112,8 @@ public class Parser {
       else {
         lex.putBackToken(check);
         Node first = parseItems();
+        Token rparen = lex.getNextToken();
+        errorCheck(rparen, "RPAREN");
         return new Node("list", first, null, null);
       }
     }
@@ -116,15 +122,14 @@ public class Parser {
     public Node parseItems() {
       System.out.println("-----> parsing <items>:");
       Node first = parseExpression();
-      Node second = null;
       Token check = lex.getNextToken();
-      if ( check.isKind("NUMBER") || check.isKind("LPAREN")) {
-        lex.putBackToken( check );
-        second = parseExpression();
-      } else {
-        lex.putBackToken( check );
+      if (!check.isKind("RPAREN")) {
+        lex.putBackToken(check);
+        Node second = parseItems();
+        return new Node("items", first, second, null);
       }
-      return new Node("items", first, second, null);
+      lex.putBackToken(check);
+      return new Node("items", first, null, null);
     }
 
 
