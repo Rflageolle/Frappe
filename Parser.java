@@ -1,3 +1,4 @@
+
 /*
 This class provides a recursive descent parser
 for Corgi (the new version),
@@ -34,14 +35,14 @@ public class Parser {
       System.out.println("-----> parsing <def>");
       Token Lparen = lex.getNextToken();
       errorCheck ( Lparen, "LPAREN", "(" );
-      Token Define = lex.getNextToken():
+      Token Define = lex.getNextToken();
       errorCheck ( Define, "RESERVED", "define" );
       Lparen = lex.getNextToken();
       errorCheck ( Lparen, "LPAREN", "(" );
       Token Name = lex.getNextToken();
       errorCheck ( Name, "NAME" );
       Token Rparen = lex.getNextToken();
-      if ( Rparen.matches( "RPAREN", " ) " )){
+      if ( Rparen.matches( "RPAREN", ")" )){
         Node first = parseExpression();
         Rparen = lex.getNextToken()
         errorCheck ( Rparen, "RPAREN", ")");
@@ -55,7 +56,7 @@ public class Parser {
         Node second = parseExpression();
         Rparen = lex.getNextToken();
         errorCheck ( Rparen, "RPAREN", ")" );
-        return new Node("def", Name, first, second, null);
+        return new Node("def", Name.getKind(), first, second, null);
       }
 
     }
@@ -63,32 +64,41 @@ public class Parser {
 
     public Node parseParams(){
       System.out.println("-----> parsing <params>:");
-      Token Name = lex.getNextToken();
-      errorCheck ( Name, "NAME" );
-      Token check = lex.getNextToken();
-      if (check.isKind("NAME")){
-        Node first = parseParams();
-        return new Node("params", Name, first, null, null);
+      Token name = lex.getNextToken();
+      if(name.isKind("NAME")) {
+        Token check = lex.getNextToken();
+        if (check.isKind("NAME")){
+          lex.putBackToken(check);
+          Node first = parseParams();
+          return new Node("params", check.getDetails(), first, null, null);
+        } else {
+          lex.putBackToken(check);
+          return new Node("params", name.getDetails(), null, null, null);
+        }
+      } else {
+        lex.putBackToken(name);
+        return null;
       }
-      return new Node("params", Name, null, null, null);
     }
 
-    public Node parseExpr() {
+    // <expr> -> NUMBER | NAME |<list>
+    public Node parseExpression() {
       System.out.println("-----> parsing <expr>:");
       Token check = lex.getNextToken();
-      if ( check.isKind("NUMBER") {
-        return new Node("expression", check, null, null, null)
+      if ( check.isKind("NUMBER") || check.isKind( "NAME")) {
+        return new Node("expression", check.getKind(), null, null, null);
       } else {
         errorCheck(check, "LPAREN", "(");
         Node first = parseList();
-        return new Node("expression", first, null, null, null)
+        return new Node("expression", first, null, null);
       }
     }
 
+    // <list> -> LPAREN RPAREN | LPAREN <items> RPAREN
     public Node parseList() {
       System.out.println("-----> parsing <list>:");
       Token lparen = lex.getNextToken();
-      errorCheck ( Lparen, "LPAREN", "(" );
+      errorCheck ( lparen, "LPAREN", "(" );
 
       Token check = lex.getNextToken();
 
@@ -102,17 +112,24 @@ public class Parser {
       }
     }
 
+    // <items> -> <expr> | <expr> <items>
     public Node parseItems() {
       System.out.println("-----> parsing <items>:");
       Node first = parseExpression();
       Node second = null;
       Token check = lex.getNextToken();
-      if ( check.isKind("NUMBER") ) {
+      if ( check.isKind("NUMBER") || check.isKind("LPAREN")) {
+        lex.putBackToken( check );
         second = parseExpression();
+      } else {
+        lex.putBackToken( check );
       }
       return new Node("items", first, second, null);
     }
 
+
+
+    // supplementary methods
     // check whether token is correct kind
     private void errorCheck( Token token, String kind ) {
       if( ! token.isKind( kind ) ) {
