@@ -43,6 +43,8 @@ public class Parser {
       Token Rparen = lex.getNextToken();
       if ( Rparen.matches( "RPAREN", " ) " )){
         Node first = parseExpression();
+        Rparen = lex.getNextToken()
+        errorCheck ( Rparen, "RPAREN", ")");
         return new Node("def", Name, first, null, null);
       }
       else {
@@ -57,6 +59,7 @@ public class Parser {
       }
 
     }
+
 
     public Node parseParams(){
       System.out.println("-----> parsing <params>:");
