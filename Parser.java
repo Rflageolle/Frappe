@@ -59,7 +59,7 @@ public class Parser {
         Node second = parseExpression();
         Rparen = lex.getNextToken();
         errorCheck ( Rparen, "RPAREN", ")" );
-        return new Node("def", Name.getKind(), first, second, null);
+        return new Node("def", Name.getDetails(), first, second, null);
       }
 
     }

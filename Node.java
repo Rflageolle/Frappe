@@ -145,15 +145,37 @@ System.out.println("has " + number + " children");
     System.exit(1);
   }
 
-//    // ===============================================================
-//    //   execute/evaluate nodes
-//    // ===============================================================
-//
-//   // ask this node to execute itself
-//   // (for nodes that don't return a value)
+   // ===============================================================
+   //   execute/evaluate nodes
+   // ===============================================================
+
+  // ask this node to execute itself
+  // (for nodes that don't return a value)
+
+  public void execute() {
+    System.out.println("Executing node " + id + " of kind " + kind );
+
+    if (kind.equals("defs")) {
+      root = this; // establishes root node of Tree
+      first.execute(); // execute the "main"
+      if (second != null && !returning) {
+        second.execute();
+      }
+    } // defs
+
+    else if (kind.equals("def")) {
+      // returning is a flag saying that first wants to return,
+      // so dont do this node's second
+      if (first.kind.equals("params")) {
+        
+      }
+
+    }
+  }
+
 //    public void execute() {
 //
-// //      System.out.println("Executing node " + id + " of kind " + kind );
+// //
 //
 //       if ( kind.equals("program") ) {
 //          root = this;  // note the root node of entire tree

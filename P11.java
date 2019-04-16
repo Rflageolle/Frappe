@@ -22,7 +22,7 @@ public class P11 {
       Node root = parser.parseDefs();
 
       // display parse tree for debugging/testing:
-      //TreeViewer viewer = new TreeViewer("Parse Tree", 0, 0, 1800, 1500, root );
+      TreeViewer viewer = new TreeViewer("Parse Tree", 0, 0, 1800, 1500, root );
 
       // execute the parse tree
       // root.execute();
