@@ -185,23 +185,26 @@ public class Lexer {
             // key word or a "var"
 
             if ( data.equals("define") || data.equals("if") ||
-                 data.equals("plus") || data.equals("minus") ||
-                 data.equals("times") || data.equals("div") ||
-                 data.equals("lt") || data.equals("le") ||
-                 data.equals("eq") || data.equals("ne") ||
-                 data.equals("and") || data.equals("or") ||
-                 data.equals("not") || data.equals("ins") ||
-                 data.equals("first") || data.equals("rest") ||
-                 data.equals("null") || data.equals("num") ||
-                 data.equals("list") || data.equals("read") ||
-                 data.equals("write") || data.equals("nl") ||
-                 data.equals("quote") || data.equals("quit") ||
-                 data.equals("EOF") )
-
-                 {
-               return new Token("RESERVED", data );
-            }
-            else {
+                 data.equals("EOF") ) {
+                   return new Token("RESERVED", data );
+            } else if (data.equals("plus") || data.equals("minus") ||
+                       data.equals("times") || data.equals("div") ||
+                       data.equals("lt") || data.equals("le") ||
+                       data.equals("eq") || data.equals("ne") ||
+                       data.equals("and") || data.equals("or") ||
+                       data.equals("not")) {
+                         return new Token("NUMBER_FUNCTION", data);
+            } else if (data.equals("ins") || data.equals("first") ||
+                       data.equals("rest")) {
+                         return new Token("LIST_FUNCTION", data);
+            } else if (data.equals("null") || data.equals("num") ||
+                       data.equals("list")) {
+                         return new Token("BOOL_FUNCTION", data);
+            } else if (data.equals("read") || data.equals("write") ||
+                       data.equals("nl") || data.equals("quote") ||
+                       data.equals("quit")) {
+                         return new Token("REPL_FUNCTION", data);
+            } else {
                return new Token( "NAME", data );
             }
          }

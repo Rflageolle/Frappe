@@ -6,12 +6,15 @@ creating a parse tree which can be interpreted
 to simulate execution of a Corgi program
 */
 
+// parser needs to keep track of ()s -
+
 import java.util.*;
 import java.io.*;
 
 public class Parser {
 
   private Lexer lex;
+  private Int parens;
 
   public Parser( Lexer lexer ) {
     lex = lexer;
@@ -155,4 +158,26 @@ public class Parser {
       }
     }
 
+    private void isLPAREN( Token token ){
+      if (token.isKind( "LPAREN")) {
+        parens = parens + 1;
+        return true;
+      } else {
+        ! token.getDetails().equals( details ) ) {
+          System.out.println("Error:  expected " + token +
+          " to be kind= " + kind +
+          " and details= " + details );
+          System.exit(1);
+      }
+    }
+
+    private void isRESERVED( Token token ) {
+      if (!token.isKind("NUMBER_FUNCTION") || !token.isKind("LIST_FUNCTION") ||  !token.isKind("BOOL_FUNCTION") || !token.isKind("REPL_FUNCTION")) {
+        ! token.getDetails().equals( details ) ) {
+          System.out.println("Error:  expected " + token +
+          " to be kind= " + kind +
+          " and details= " + details );
+          System.exit(1);
+      }
+    }
 }

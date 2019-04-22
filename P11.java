@@ -29,4 +29,13 @@ public class P11 {
 
    }// main
 
+   // listens to the CL and parses calls
+   private void REPL() {
+     Scanner in = new Scanner( System.in );
+     String call = in.nextLine();
+
+     do {
+
+     } while (call != null);
+   }
 }
