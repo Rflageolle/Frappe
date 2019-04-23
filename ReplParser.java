@@ -1,15 +1,17 @@
 class ReplParser {
 
   Lexer lex;
+  MemTable lookup;
 
   public ReplParser (Lexer lex) {
     this.lex = lex;
+    lookup = new MemTable();
   }
 
 
   // GRAMMAR FOR REPL
   // each line of the repl is a <call>
-  // <call> -> LPAREN PREDEFINEDFUNCNAME <params> RPAREN | LPAREN NAME <params> RPAREN
+  // <call> -> LPAREN PREDEFINEDFUNCNAME <args> RPAREN | LPAREN NAME <args> RPAREN
     private void parseCall(){
 
       Token lparen = lex.getNextToken();
@@ -132,6 +134,10 @@ class ReplParser {
     parseCall();
   }
 
+
+  public void execute( Node root ) {
+    root.execute()
+  }
 
 
   // supplementary methods

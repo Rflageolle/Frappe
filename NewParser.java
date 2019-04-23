@@ -113,7 +113,7 @@ public class NewParser {
             lex.putBackToken(name);
             lex.putBackToken(check);
             Node first = parseExpr();
-            
+
             return new Node("arg", name.getDetails(), first, null, null);
           }
       }
@@ -134,6 +134,7 @@ public class NewParser {
           errorCheck( rparen, "RPAREN");
 
           return new Node("expr", name.getDetails(), first, second, third);
+          
         } else if ( name.matches("REPL_FUNCTION", "quote") ) {
           Node first = parseList();
           Token rparen = lex.getNextToken();

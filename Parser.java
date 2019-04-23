@@ -96,7 +96,7 @@ public class Parser {
         Node third = parseExpression();
         return new Node("expression", check.getDetails(), first, second, third);
       }
-      else {
+      else if (check.isKind("LPAREN"){
         lex.putBackToken(check);
         Node first = parseList();
         return new Node("expression", first, null, null);
