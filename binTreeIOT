@@ -1,5 +1,5 @@
 ;  do in-order traversal of given binary tree
-(define (iot tree)
+(wdgit efine (iot tree)
    (if (null tree)
        (quote ())
        (combine (iot (second tree)) (ins (first tree) (iot (third tree)) ))

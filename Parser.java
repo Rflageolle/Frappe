@@ -14,10 +14,11 @@ import java.io.*;
 public class Parser {
 
   private Lexer lex;
-  private Int parens;
+  private int parens;
 
   public Parser( Lexer lexer ) {
     lex = lexer;
+    parens = 0;
   }
 
   //<defs> -> <def> | <def> <defs>
@@ -27,7 +28,7 @@ public class Parser {
     Token check = lex.getNextToken();
     if (!check.isKind("EOF")){
       lex.putBackToken(check);
-       Node second = parseDefs();
+      Node second = parseDefs();
       return new Node("defs", first, second, null);
     }
     else {
@@ -87,13 +88,13 @@ public class Parser {
     public Node parseExpression() {
       System.out.println("-----> parsing <expr>:");
       Token check = lex.getNextToken();
-      if ( check.isKind("NUMBER") || check.isKind( "NAME") || check.isKind("RESERVED") ){
+      if ( check.isKind("NUMBER") || check.isKind( "NAME") ){
         return new Node("expression", check.getDetails(), null, null, null);
-      // } else if (check.matches("RESERVED", "if")) {
-      //   Node first = parseExpression();
-      //   Node second = parseExpression();
-      //   Node third = parseExpression();
-      //   return new Node("expression", "if", first, second, third);
+      } else if ( check.matches("RESERVED", "if") ) {
+        Node first = parseExpression();
+        Node second = parseExpression();
+        Node third = parseExpression();
+        return new Node("expression", check.getDetails(), first, second, third);
       }
       else {
         lex.putBackToken(check);
@@ -158,25 +159,10 @@ public class Parser {
       }
     }
 
-    private void isLPAREN( Token token ){
-      if (token.isKind( "LPAREN")) {
-        parens = parens + 1;
-        return true;
-      } else {
-        ! token.getDetails().equals( details ) ) {
-          System.out.println("Error:  expected " + token +
-          " to be kind= " + kind +
-          " and details= " + details );
-          System.exit(1);
-      }
-    }
-
     private void isRESERVED( Token token ) {
-      if (!token.isKind("NUMBER_FUNCTION") || !token.isKind("LIST_FUNCTION") ||  !token.isKind("BOOL_FUNCTION") || !token.isKind("REPL_FUNCTION")) {
-        ! token.getDetails().equals( details ) ) {
+      if (!token.isKind("NUMBER_FUNCTION") || !token.isKind("LIST_FUNCTION") || !token.isKind("BOOL_FUNCTION") || !token.isKind("REPL_FUNCTION")) {
           System.out.println("Error:  expected " + token +
-          " to be kind= " + kind +
-          " and details= " + details );
+          " to be kind= RESERVED");
           System.exit(1);
       }
     }

@@ -16,26 +16,34 @@ public class P11 {
       }
 
       Lexer lex = new Lexer( name );
-      Parser parser = new Parser( lex );
+      NewParser parser = new NewParser( lex );
 
       // start with <statements>
       Node root = parser.parseDefs();
 
       // display parse tree for debugging/testing:
-      //TreeViewer viewer = new TreeViewer("Parse Tree", 0, 0, 1800, 1500, root );
+      TreeViewer viewer = new TreeViewer("Parse Tree", 0, 0, 1800, 1500, root );
 
       // execute the parse tree
       // root.execute();
 
+
+   // while make parse tree thisnk about how to make mem table for where the entry into how to
+   // evaluate starts, so when REPLparer sees a file definded function it can start from the
+   // expression node to evaluate
+
+
    }// main
 
    // listens to the CL and parses calls
-   private void REPL() {
-     Scanner in = new Scanner( System.in );
-     String call = in.nextLine();
-
-     do {
-
-     } while (call != null);
-   }
+   // private void REPL() {
+   //   Scanner in = new Scanner( System.in );
+   //   String call = in.nextLine();
+   //
+   //   do {
+   //     Lexer lex = new Lexer( call );
+   //     Parser parse = new ReplParser( lex );
+   //
+   //   } while (call != null);
+   // }
 }
