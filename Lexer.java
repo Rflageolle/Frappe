@@ -287,15 +287,15 @@ public class Lexer {
          if ( state == 2 ) {
             // now anything starting with letter is either a
             // key word or a "var"
-            
-            if ( data.equals("class") || data.equals("static") ||
-                 data.equals("while") || data.equals("return") ||
-                 data.equals("if") || data.equals("else") ||
-                 data.equals("new") || data.equals("null") ||
-                 data.equals("this") || data.equals("true") ||
-                 data.equals("false")
+
+            if ( data.equals("CLASS") || data.equals("STATIC") ||
+                 data.equals("WHILE") || data.equals("RETURN") ||
+                 data.equals("IF") || data.equals("ELSE") ||
+                 data.equals("NEW") || data.equals("NULL") ||
+                 data.equals("THIS") || data.equals("TRUE") ||
+                 data.equals("FALSE")
                 ) {
-               return new Token("keyword", data.toUpperCase());
+               return new Token("KEYWORD", data.toUpperCase());
             }
             else {
                return new Token( "NAME", data );
