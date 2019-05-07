@@ -188,3 +188,30 @@ class ReplParser {
   }
 
 }
+
+
+{
+
+  //parse repl 
+
+  Boolean hasUsrDefFuncs = false;
+
+  // (<NAME> (<args>))
+  // (<RESERVED> (<args>))
+  public Value parseRepl(Node userDefTree) {
+    Token lparen = lex.getNextToken();
+    Token name = lex.getNextToken();
+
+    StackFrameList list = new StackFrameList();
+
+    list.setHead(name.getDetails());
+
+    lparen = lex.getNextToken();
+
+    if ( lparen.isKind( "LPAREN" )) {
+
+    }
+  }
+
+
+}
